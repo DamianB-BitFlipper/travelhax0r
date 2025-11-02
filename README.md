@@ -19,7 +19,7 @@ The TravelHax0r MCP server provides a single tool called `search_flights` that a
    uv sync
    ```
 
-2. The MCP server is located at `src/travelhax0r/mcp_server.py`
+2. The MCP server is located at `mcp_server.py`
 
 ## Configuration for ChatGPT
 
@@ -38,7 +38,7 @@ Add the following configuration to your `mcpServers` object in the settings file
   "mcpServers": {
     "travelhax0r-flights": {
       "command": "uv",
-      "args": ["run", "--directory", "/path/to/your/travelhax0r", "python", "src/travelhax0r/mcp_server.py"],
+      "args": ["run", "--directory", "/path/to/your/travelhax0r", "python", "mcp_server.py"],
       "disabled": false,
       "autoApprove": []
     }
