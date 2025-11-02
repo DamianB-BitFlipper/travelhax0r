@@ -37,8 +37,14 @@ Add the following configuration to your `mcpServers` object in the settings file
 {
   "mcpServers": {
     "travelhax0r-flights": {
-      "command": "uv",
-      "args": ["run", "--directory", "/path/to/your/travelhax0r", "python", "mcp_server.py"],
+      "command": "/path/to/uv",
+      "args": [
+        "run",
+        "--directory",
+        "/path/to/your/travelhax0r",
+        "python",
+        "./travelhax0r/mcp_server.py"
+      ],
       "disabled": false,
       "autoApprove": []
     }
@@ -46,4 +52,6 @@ Add the following configuration to your `mcpServers` object in the settings file
 }
 ```
 
-**Important**: Replace `/path/to/your/travelhax0r/` with the actual path to your TravelHax0r project directory.
+**Important**:
+- Replace `/path/to/your/travelhax0r/` with the actual path to your TravelHax0r project directory.
+- You may need to use the full path to `uv`. Run `which uv` in your terminal to get the full path and replace `"uv"` with that path in the configuration.
