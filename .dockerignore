@@ -59,3 +59,6 @@ tests/
 .envrc
 .python-version
 ruff_cache/
+
+# Debugging scripts
+my_*

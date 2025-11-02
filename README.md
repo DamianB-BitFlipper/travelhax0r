@@ -31,17 +31,16 @@ Add to your MCP settings file (`claude_desktop_config.json`):
 {
   "mcpServers": {
     "travelhax0r-flights": {
-      "command": "uv",
+      "command": "/usr/local/bin/docker-compose",
       "args": [
+        "-f",
+        "~/Documents/code/travelhax0r/docker-compose.yml",
         "run",
-        "--directory",
-        "/path/to/travelhax0r",
-        "python",
-        "travelhax0r/mcp_server.py"
+        "--rm",
+        "-it",
+        "travelhax0r-mcp"
       ]
     }
   }
 }
 ```
-
-Replace `/path/to/travelhax0r` with your actual project path.
