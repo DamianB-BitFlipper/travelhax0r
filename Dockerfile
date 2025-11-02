@@ -40,5 +40,8 @@ COPY travelhax0r/ ./travelhax0r/
 # Expose port 8080 for the MCP server
 EXPOSE 8080
 
-# Run the MCP server
-CMD ["uv", "run", "python", "travelhax0r/mcp_server.py"]
+# Set entrypoint to run the MCP server
+ENTRYPOINT ["uv", "run", "python", "travelhax0r/mcp_server.py"]
+
+# Default CMD is the transport type (stdio)
+CMD ["stdio"]

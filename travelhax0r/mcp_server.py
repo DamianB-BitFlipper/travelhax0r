@@ -4,11 +4,12 @@ MCP Server for TravelHax0r flight search functionality.
 Provides a single tool to search for flights using the fast_flights library.
 """
 
+import sys
 from enum import StrEnum
 
+from fast_flights import FlightData, Passengers, TFSData, aget_flights_from_filter
 from fastmcp import Context, FastMCP
 
-from fast_flights import FlightData, Passengers, TFSData, aget_flights_from_filter
 from travelhax0r.utils import parse_duration, parse_price
 
 
@@ -225,4 +226,10 @@ async def paginate_flight_results(
 
 
 if __name__ == "__main__":
-    app.run()
+    # Check command line arguments for transport type
+    if len(sys.argv) > 1 and sys.argv[1] == "http":
+        # Run with HTTP transport on port 8080
+        app.run(transport="http", host="0.0.0.0", port=8080)
+    else:
+        # Run with stdio transport (default)
+        app.run()

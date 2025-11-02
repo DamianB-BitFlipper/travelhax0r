@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  travelhax0r-mcp:
+    extends:
+      file: docker-compose.yml
+      service: travelhax0r-mcp
+    command: ["http"]  # Override CMD to use HTTP transport
+    ports:
+      - "8080:8080"  # Ensure port is exposed for HTTP access
