@@ -9,6 +9,7 @@ authors = [
 requires-python = ">=3.13"
 dependencies = [
     "fast-flights[local]",
+    "fastmcp>=2.13.0.2",
 ]
 
 [project.scripts]
@@ -39,8 +40,6 @@ select = [
     "B",      # flake8-bugbear
     "A",      # flake8-builtins
     "C4",     # flake8-comprehensions
-    "T10",    # flake8-debugger
-    "EM",     # flake8-errmsg
     "PIE",    # flake8-pie
     "PYI",    # flake8-pyi
     "PT",     # flake8-pytest-style
@@ -58,7 +57,6 @@ select = [
     "PD",     # pandas-vet
     "PGH",    # pygrep-hooks
     "PL",     # Pylint
-    "TRY",    # tryceratops
     "PERF",   # Perflint
     "FURB",   # refurb
     "LOG",    # flake8-logging
