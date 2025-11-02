@@ -6,14 +6,14 @@ Provides a single tool to search for flights using the fast_flights library.
 
 from fastmcp import FastMCP
 
-from fast_flights import FlightData, Passengers, TFSData, get_flights_from_filter
+from fast_flights import FlightData, Passengers, TFSData, aget_flights_from_filter
 
 # Create the MCP server
-app = FastMCP("travelhax0r-flights")
+app = FastMCP("travelhax0r")
 
 
 @app.tool()
-def search_flights(
+async def search_flights(
     departure_date: str,
     from_airport: str,
     to_airport: str,
@@ -25,7 +25,6 @@ def search_flights(
     infants_in_seat: int = 0,
     infants_on_lap: int = 0,
     currency: str = "USD",
-    mode: str = "local",
 ) -> str:
     """
     Search for flights using the fast_flights library.
@@ -42,7 +41,6 @@ def search_flights(
         infants_in_seat: Number of infants in seats
         infants_on_lap: Number of infants on lap
         currency: Currency code for prices (e.g., "USD")
-        mode: Search mode - "local", "common", "fallback", etc.
 
     Returns:
         Formatted string with flight search results
@@ -102,9 +100,9 @@ def search_flights(
         )
 
         # Search for flights
-        result = get_flights_from_filter(
+        result = await aget_flights_from_filter(
             tfs_data,
-            mode=mode,
+            mode="local",
             currency=currency,
         )
 
