@@ -29,19 +29,20 @@ def parse_duration(duration_str: str) -> int:
     return hours * 60 + minutes
 
 
-def parse_price(price_str: str) -> float:
+def parse_price(price_str: str) -> float | None:
     """
     Parse price string into a float value.
 
     Removes all non-digit and non-dot characters and converts to float.
-    Examples: "$601" -> 601.0, "€450.50" -> 450.50
+    Returns None if parsing fails.
+    Examples: "$601" -> 601.0, "€450.50" -> 450.50, "invalid" -> None
 
     Args:
         price_str: Price string from flight data
 
     Returns:
-        Price as a float value
+        Price as a float value, or None if parsing fails
     """
     # Remove all characters except digits and dots
     numeric_str = re.sub(r"[^\d.]", "", price_str)
-    return float(numeric_str) if numeric_str else 0.0
+    return float(numeric_str) if numeric_str else None

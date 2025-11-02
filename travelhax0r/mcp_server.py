@@ -6,7 +6,7 @@ Provides a single tool to search for flights using the fast_flights library.
 
 from enum import StrEnum
 
-from fastmcp import FastMCP
+from fastmcp import Context, FastMCP
 
 from fast_flights import FlightData, Passengers, TFSData, aget_flights_from_filter
 from travelhax0r.utils import parse_duration, parse_price
@@ -33,12 +33,10 @@ class Seat(StrEnum):
 # Create the MCP server
 app = FastMCP("travelhax0r")
 
-# Global storage for last flight search results
-_last_flight_results = None
-
 
 @app.tool()
 async def search_flights(
+    ctx: Context,
     departure_date: str,
     from_airport: str,
     to_airport: str,
@@ -126,7 +124,7 @@ async def search_flights(
 
         # Sort flights based on sort_by parameter
         if sort_by == SortBy.PRICE:
-            result.flights.sort(key=lambda f: parse_price(f.price))
+            result.flights.sort(key=lambda f: parse_price(f.price) or float("inf"))
         elif sort_by == SortBy.DURATION:
             result.flights.sort(key=lambda f: parse_duration(f.duration))
         elif sort_by == SortBy.STOPS:
@@ -135,8 +133,7 @@ async def search_flights(
             )
 
         # Store the results in session storage
-        global _last_flight_results  # noqa: PLW0603
-        _last_flight_results = result.flights
+        ctx.set_state("flight_results", result.flights)
 
         # Format the results
         output = []
@@ -168,23 +165,27 @@ async def search_flights(
 
 
 @app.tool()
-async def get_flight_results(
+async def paginate_flight_results(
+    ctx: Context,
     start_index: int = 0,
     count: int = 10,
 ) -> str:
     """
-    Get a slice of flight results from the last search.
+    Get a paginated slice of flight results from the most recent search.
+
+    Use this tool to browse through large result sets by requesting specific
+    ranges of flights. For example, to see flights 11-20, use start_index=10.
 
     Args:
-        start_index: Starting index of flights to return (0-based)
+        start_index: Starting index of flights to return (0-based, default: 0)
         count: Number of flights to return (default: 10, max: 50)
 
     Returns:
-        Formatted string with the requested flight results
+        Formatted string showing the requested range of flight results
     """
-    global _last_flight_results  # noqa: PLW0602
+    flight_results = ctx.get_state("flight_results")
 
-    if _last_flight_results is None:
+    if flight_results is None:
         return "No flight search results available. Please run search_flights first."
 
     if start_index < 0:
@@ -193,12 +194,12 @@ async def get_flight_results(
     if count < 1 or count > 50:
         return "count must be between 1 and 50"
 
-    total_flights = len(_last_flight_results)
+    total_flights = len(flight_results)
     if start_index >= total_flights:
         return f"No flights available starting from index {start_index}. Total flights: {total_flights}"
 
     end_index = min(start_index + count, total_flights)
-    flights_slice = _last_flight_results[start_index:end_index]
+    flights_slice = flight_results[start_index:end_index]
 
     # Format the results
     output = []
