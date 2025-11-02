@@ -10,7 +10,11 @@ from fastmcp import FastMCP
 
 from fast_flights import FlightData, Passengers, TFSData, aget_flights_from_filter
 
-from .utils import parse_duration, parse_price
+try:
+    from .utils import parse_duration, parse_price
+except ImportError:
+    # Fallback for when run directly
+    from utils import parse_duration, parse_price
 
 
 class SortBy(StrEnum):
@@ -33,6 +37,9 @@ class Seat(StrEnum):
 
 # Create the MCP server
 app = FastMCP("travelhax0r")
+
+# Global storage for last flight search results
+_last_flight_results = None
 
 
 @app.tool()
@@ -132,6 +139,10 @@ async def search_flights(
                 key=lambda f: f.stops if isinstance(f.stops, int) else 999
             )
 
+        # Store the results in session storage
+        global _last_flight_results  # noqa: PLW0603
+        _last_flight_results = result.flights
+
         # Format the results
         output = []
         output.append(f"Current price range: {result.current_price}")
@@ -159,6 +170,62 @@ async def search_flights(
 
     except Exception as e:
         return f"Error searching for flights: {e!s}"
+
+
+@app.tool()
+async def get_flight_results(
+    start_index: int = 0,
+    count: int = 10,
+) -> str:
+    """
+    Get a slice of flight results from the last search.
+
+    Args:
+        start_index: Starting index of flights to return (0-based)
+        count: Number of flights to return (default: 10, max: 50)
+
+    Returns:
+        Formatted string with the requested flight results
+    """
+    global _last_flight_results  # noqa: PLW0602
+
+    if _last_flight_results is None:
+        return "No flight search results available. Please run search_flights first."
+
+    if start_index < 0:
+        return "start_index must be non-negative"
+
+    if count < 1 or count > 50:
+        return "count must be between 1 and 50"
+
+    total_flights = len(_last_flight_results)
+    if start_index >= total_flights:
+        return f"No flights available starting from index {start_index}. Total flights: {total_flights}"
+
+    end_index = min(start_index + count, total_flights)
+    flights_slice = _last_flight_results[start_index:end_index]
+
+    # Format the results
+    output = []
+    output.append(f"Showing flights {start_index + 1}-{end_index} of {total_flights}\n")
+
+    for i, flight in enumerate(flights_slice):
+        actual_index = start_index + i + 1
+        best_marker = " ⭐ BEST" if flight.is_best else ""
+        output.append(f"Flight {actual_index}:{best_marker}")
+        output.append(f"  Airline: {flight.name}")
+        output.append(f"  Departure: {flight.departure}")
+        output.append(f"  Arrival: {flight.arrival}")
+        if flight.arrival_time_ahead:
+            output.append(f"  Time ahead: {flight.arrival_time_ahead}")
+        output.append(f"  Duration: {flight.duration}")
+        output.append(f"  Stops: {flight.stops}")
+        if flight.delay:
+            output.append(f"  Delay: {flight.delay}")
+        output.append(f"  Price: {flight.price}")
+        output.append("")
+
+    return "\n".join(output)
 
 
 if __name__ == "__main__":
