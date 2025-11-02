@@ -34,10 +34,9 @@ Add to your MCP settings file (`claude_desktop_config.json`):
       "command": "/usr/local/bin/docker-compose",
       "args": [
         "-f",
-        "~/Documents/code/travelhax0r/docker-compose.yml",
+        "/path/to/travelhax0r/docker-compose.yml",
         "run",
         "--rm",
-        "-it",
         "travelhax0r-mcp"
       ]
     }

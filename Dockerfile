@@ -1,8 +1,10 @@
 # Use Python 3.13 with uv pre-installed
 FROM ghcr.io/astral-sh/uv:python3.13-bookworm-slim
 
-# Install git for git dependencies
-RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
+# Install git and system dependencies needed by Chromium
+RUN apt-get update && apt-get install -y \
+    git \
+    && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /app
@@ -15,6 +17,9 @@ COPY ./README.md .
 
 # Install dependencies using uv
 RUN uv sync --frozen --no-install-project
+
+# Install playwright browser
+RUN python -m pip install playwright && python -m playwright install chromium
 
 # Copy the travelhax0r package
 COPY travelhax0r/ ./travelhax0r/
