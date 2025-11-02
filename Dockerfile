@@ -8,9 +8,10 @@ RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 
 # Copy pyproject.toml and uv.lock for dependency installation
-COPY pyproject.toml uv.lock ./
+COPY ./pyproject.toml ./uv.lock ./
 
-COPY README .
+# Hatch requires the README.md to build the project
+COPY ./README.md .
 
 # Install dependencies using uv
 RUN uv sync --frozen --no-install-project

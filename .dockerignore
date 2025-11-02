@@ -40,8 +40,9 @@ Thumbs.db
 .git/
 .gitignore
 
-# Documentation
+# Documentation except the README
 *.md
+!README.md
 docs/
 
 # Tests
