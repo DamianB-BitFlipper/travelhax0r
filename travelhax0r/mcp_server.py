@@ -4,9 +4,32 @@ MCP Server for TravelHax0r flight search functionality.
 Provides a single tool to search for flights using the fast_flights library.
 """
 
+from enum import StrEnum
+
 from fastmcp import FastMCP
 
 from fast_flights import FlightData, Passengers, TFSData, aget_flights_from_filter
+
+from .utils import parse_duration, parse_price
+
+
+class SortBy(StrEnum):
+    PRICE = "price"
+    DURATION = "duration"
+    STOPS = "stops"
+
+
+class TripType(StrEnum):
+    ROUND_TRIP = "round-trip"
+    ONE_WAY = "one-way"
+
+
+class Seat(StrEnum):
+    ECONOMY = "economy"
+    PREMIUM_ECONOMY = "premium-economy"
+    BUSINESS = "business"
+    FIRST = "first"
+
 
 # Create the MCP server
 app = FastMCP("travelhax0r")
@@ -18,13 +41,14 @@ async def search_flights(
     from_airport: str,
     to_airport: str,
     return_date: str | None = None,
-    trip_type: str = "round-trip",
-    seat: str = "economy",
+    trip_type: TripType = TripType.ROUND_TRIP,
+    seat: Seat = Seat.ECONOMY,
     adults: int = 1,
     children: int = 0,
     infants_in_seat: int = 0,
     infants_on_lap: int = 0,
     currency: str = "USD",
+    sort_by: SortBy = SortBy.PRICE,
 ) -> str:
     """
     Search for flights using the fast_flights library.
@@ -41,23 +65,12 @@ async def search_flights(
         infants_in_seat: Number of infants in seats
         infants_on_lap: Number of infants on lap
         currency: Currency code for prices (e.g., "USD")
+        sort_by: How to sort results - "price", "duration", or "stops" (default: "price")
 
     Returns:
         Formatted string with flight search results
     """
     try:
-        # Validate trip type
-        if trip_type not in ["round-trip", "one-way"]:
-            raise ValueError(
-                f"Invalid trip_type: {trip_type}. Must be 'round-trip' or 'one-way'"
-            )
-
-        # Validate seat class
-        if seat not in ["economy", "premium-economy", "business", "first"]:
-            raise ValueError(
-                f"Invalid seat: {seat}. Must be 'economy', 'premium-economy', 'business', or 'first'"
-            )
-
         # Create passengers object
         passengers = Passengers(
             adults=adults,
@@ -108,6 +121,16 @@ async def search_flights(
 
         if result is None:
             return "No flights found for the given search criteria."
+
+        # Sort flights based on sort_by parameter
+        if sort_by == SortBy.PRICE:
+            result.flights.sort(key=lambda f: parse_price(f.price))
+        elif sort_by == SortBy.DURATION:
+            result.flights.sort(key=lambda f: parse_duration(f.duration))
+        elif sort_by == SortBy.STOPS:
+            result.flights.sort(
+                key=lambda f: f.stops if isinstance(f.stops, int) else 999
+            )
 
         # Format the results
         output = []
