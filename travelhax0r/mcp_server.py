@@ -9,12 +9,7 @@ from enum import StrEnum
 from fastmcp import FastMCP
 
 from fast_flights import FlightData, Passengers, TFSData, aget_flights_from_filter
-
-try:
-    from .utils import parse_duration, parse_price
-except ImportError:
-    # Fallback for when run directly
-    from utils import parse_duration, parse_price
+from travelhax0r.utils import parse_duration, parse_price
 
 
 class SortBy(StrEnum):
