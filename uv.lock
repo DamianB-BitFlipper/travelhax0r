@@ -329,7 +329,7 @@ wheels = [
 [[package]]
 name = "fast-flights"
 version = "2.2"
-source = { editable = "fast_flights" }
+source = { git = "https://github.com/DamianB-BitFlipper/flights.git#66f179c17f02404cb245552ec2d5717572eb67b0" }
 dependencies = [
     { name = "primp" },
     { name = "protobuf" },
@@ -339,21 +339,6 @@ dependencies = [
 [package.optional-dependencies]
 local = [
     { name = "playwright" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "playwright", marker = "extra == 'local'" },
-    { name = "primp" },
-    { name = "protobuf", specifier = ">=5.27.0" },
-    { name = "selectolax" },
-]
-provides-extras = ["local"]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "ipykernel", specifier = ">=6.29.5" },
-    { name = "pip", specifier = ">=25.0.1" },
 ]
 
 [[package]]
@@ -1240,7 +1225,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "fast-flights", extras = ["local"], editable = "fast_flights" },
+    { name = "fast-flights", extras = ["local"], git = "https://github.com/DamianB-BitFlipper/flights.git" },
     { name = "fastmcp", specifier = ">=2.13.0.2" },
 ]
 

@@ -1,3 +1,0 @@
-[submodule "flights"]
-	path = fast_flights
-	url = git@github.com:DamianB-BitFlipper/flights.git

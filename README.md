@@ -1,57 +1,47 @@
-# TravelHax0r MCP Server Setup
+# TravelHax0r MCP Server
 
-This document explains how to set up and use the TravelHax0r MCP server for flight search functionality with ChatGPT.
+Flight search MCP server using the fast_flights library.
 
-## Overview
+## Quick Start
 
-The TravelHax0r MCP server provides a single tool called `search_flights` that allows you to search for flights using the fast_flights library. It wraps the `get_flights_from_filter` function with a user-friendly interface.
+```bash
+# Install dependencies
+uv sync
 
-## Prerequisites
+# Run the server
+uv run python travelhax0r/mcp_server.py
+```
 
-- Python 3.8+
-- The `fastmcp` and `fast_flights` packages installed
-- Access to the TravelHax0r project
+## Docker
 
-## Installation
+```bash
+# Using Docker Compose
+docker-compose up --build
 
-1. Ensure you have the required dependencies:
-   ```bash
-   uv sync
-   ```
+# Or build and run directly
+docker build -t travelhax0r-mcp .
+docker run -p 8080:8080 travelhax0r-mcp
+```
 
-2. The MCP server is located at `mcp_server.py`
+## MCP Configuration
 
-## Configuration for ChatGPT
-
-To use this MCP server with ChatGPT, you need to configure it in your MCP settings. The settings file is typically located at:
-
-- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
-- **Windows**: `%APPDATA%/Claude/claude_desktop_config.json`
-- **Linux**: `~/.config/Claude/claude_desktop_config.json`
-
-### Adding the Server Configuration
-
-Add the following configuration to your `mcpServers` object in the settings file:
+Add to your MCP settings file (`claude_desktop_config.json`):
 
 ```json
 {
   "mcpServers": {
     "travelhax0r-flights": {
-      "command": "/path/to/uv",
+      "command": "uv",
       "args": [
         "run",
         "--directory",
-        "/path/to/your/travelhax0r",
+        "/path/to/travelhax0r",
         "python",
-        "./travelhax0r/mcp_server.py"
-      ],
-      "disabled": false,
-      "autoApprove": []
+        "travelhax0r/mcp_server.py"
+      ]
     }
   }
 }
 ```
 
-**Important**:
-- Replace `/path/to/your/travelhax0r/` with the actual path to your TravelHax0r project directory.
-- You may need to use the full path to `uv`. Run `which uv` in your terminal to get the full path and replace `"uv"` with that path in the configuration.
+Replace `/path/to/travelhax0r` with your actual project path.

@@ -78,4 +78,4 @@ ignore = [
 known-first-party = ["travelhax0r"]
 
 [tool.uv.sources]
-fast-flights = { path = "fast_flights", editable = true }
+fast-flights = { git = "https://github.com/DamianB-BitFlipper/flights.git" }
